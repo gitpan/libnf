@@ -981,7 +981,10 @@ typedef struct tpl_ext_27_s {
  */
 #define EX_NSEL_COMMON	37
 typedef struct tpl_ext_37_s {
-	uint64_t	event_time;
+	union {
+		uint64_t	event_time;
+		uint32_t	v[2];
+	};
 	uint32_t	conn_id;
 	union {
 		struct {

@@ -272,8 +272,8 @@ static void usage(char *name) {
 					"-r <file>\tread input from file\n"
 					"-w <file>\twrite output to file\n"
 					"-f\t\tread netflow filter from file\n"
-					"-n\t\tDefine number of top N. \n"
-					"-c\t\tLimit number of records to display\n"
+					"-n\t\tDefine number of top N for stat or sorted output.\n"
+					"-c\t\tLimit number of records to read from source(es)\n"
 					"-D <dns>\tUse nameserver <dns> for host lookup.\n"
 					"-N\t\tPrint plain numbers\n"
 					"-s <expr>[/<order>]\tGenerate statistics for <expr> any valid record element.\n"
@@ -290,7 +290,8 @@ static void usage(char *name) {
 					"-M <expr>\tRead input from multiple directories.\n"
 					"\t\t/dir/dir1:dir2:dir3 Read the same files from '/dir/dir1' '/dir/dir2' and '/dir/dir3'.\n"
 					"\t\trequests either -r filename or -R firstfile:lastfile without pathnames\n"
-					"-m\t\tPrint netflow data date sorted. Only useful with -M\n"
+					"-m\t\tdepricated\n"
+					"-O <order> Sort order for aggregated flows - tstart, tend, flows, packets bps pps bbp etc.\n"
 					"-R <expr>\tRead input from sequence of files.\n"
 					"\t\t/any/dir  Read all files in that directory.\n"
 					"\t\t/dir/file Read all files beginning with 'file'.\n"
@@ -377,17 +378,9 @@ int	v1_map_done = 0;
 
 	// Do the logic first
 
-	// print flows later, when all records are processed and sorted
-	// flow limits apply at that time
-	if ( sort_flows ) {
+	// do not print flows when doing any stats are sorting
+	if ( sort_flows || flow_stat || element_stat ) {
 		print_record = NULL;
-		limitflows   = 0;
-	}
-
-	// do not print flows when doing any stats
-	if ( flow_stat || element_stat ) {
-		print_record = NULL;
-		limitflows   = 0;
 	}
 
 	// do not write flows to file, when doing any stats
@@ -732,7 +725,7 @@ char 		Ident[IDENTLEN];
 	bidir			= 0;
 	t_start = t_end = 0;
 	syntax_only	    = 0;
-	topN	        = 10;
+	topN	        = -1;
 	flow_stat       = 0;
 	print_stat      = 0;
 	element_stat  	= 0;
@@ -953,6 +946,12 @@ char 		Ident[IDENTLEN];
 		exit(0);
 	}
 
+	if ( (element_stat || flow_stat) && (topN == -1)  ) 
+		topN = 10;
+
+	if ( topN < 0 )
+		topN = 0;
+
 	if ( (element_stat && !flow_stat) && aggregate_mask ) {
 		LogError("Warning: Aggregation ignored for element statistics\n");
 		aggregate_mask = 0;
@@ -1136,7 +1135,7 @@ char 		Ident[IDENTLEN];
 		exit(0);
 
 	if ( print_order && flow_stat ) {
-		printf("-s record and -m are mutually exclusive options\n");
+		printf("-s record and -O (-m) are mutually exclusive options\n");
 		exit(255);
 	}
 
@@ -1190,7 +1189,7 @@ char 		Ident[IDENTLEN];
 			}
 			DisposeFile(nffile);
 		} else {
-			PrintFlowTable(print_record, limitflows, do_tag, GuessDir, extension_map_list);
+			PrintFlowTable(print_record, topN, do_tag, GuessDir, extension_map_list);
 		}
 	}
 

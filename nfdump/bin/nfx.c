@@ -235,11 +235,12 @@ uint16_t map_id;
 	// new map is different but has same id - search for map in page list
 	for ( l = extension_map_list->map_list ; l != NULL ; l = l->next) {
 		int i = 0;
-		if ( l->map->size == map->size ) {
-			while ( l->map->ex_id[i] && (l->map->ex_id[i] == map->ex_id[i]) ) 
+		dbg_printf("Check map: %u\n", l->map->map_id);
+		if ( l->map->size == map->size && ( l->map->extension_size == map->extension_size ) ) {
+			while ( (l->map->ex_id[i] || map->ex_id[i]) && (l->map->ex_id[i] == map->ex_id[i]) ) 
 				i++;
 			if ( l->map->ex_id[i] == 0 ) {
-				dbg_printf("Map found: 0x%llu\n", (long long unsigned)l);
+				dbg_printf("Map found: 0x%llu ID: %u\n", (long long unsigned)l, l->map->map_id);
 				break;
 			}
 		}

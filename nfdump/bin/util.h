@@ -41,12 +41,14 @@
 
 #define EBUFF_SIZE 256
 
+#ifndef HAVE_HTONLL
 #ifdef WORDS_BIGENDIAN
 #	define ntohll(n)	(n)
 #	define htonll(n)	(n)
 #else
 #	define ntohll(n)	(((uint64_t)ntohl(n)) << 32) + ntohl((n) >> 32)
 #	define htonll(n)	(((uint64_t)htonl(n)) << 32) + htonl((n) >> 32)
+#endif
 #endif
 
 #define _1KB (double)(1000.0)

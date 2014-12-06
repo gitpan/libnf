@@ -129,19 +129,20 @@ uint16_t	map_size;
 	// default map - 0 extensions
 	map_size 		 = sizeof(extension_map_t);
 	i=0;
+	dbg_printf("v1 map: map size start: %u\n", map_size);
 	while ( (id = v1_full_map[i]) != 0  ) {
 		if ( extension_descriptor[id].enabled ) {
 			extension_size += extension_descriptor[id].size;
 			map_size += sizeof(uint16_t);
+			dbg_printf("v1 map: enabled extension %u\n", id);
 		}
 		i++;
 	}
+	dbg_printf("v1 map: map size so far: %u\n", map_size);
+
 	// extension_size contains the sum of all optional extensions
 	// caculate the record size 
 	v1_output_record_size = COMMON_RECORD_DATA_SIZE + V1_BLOCK_DATA_SIZE + extension_size;  
- 
-	// now the full extension map size
-	map_size	+= sizeof(extension_map_t);
  
 	// align 32 bits
 	if ( ( map_size & 0x3 ) != 0 )

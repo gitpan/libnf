@@ -440,18 +440,46 @@ int InitExtensionMapList(FlowSource_t *fs) {
 	}
 	fs->extension_map_list.max_maps  = BLOCK_SIZE;
 	fs->extension_map_list.next_free = 0;
+	fs->extension_map_list.num_maps  = 0;
 
 	return 1;
 
 } // End of InitExtensionMapList
 
+int ReInitExtensionMapList(FlowSource_t *fs) {
+
+	dbg_printf("Flush all extension maps!\n");
+	free(fs->extension_map_list.maps);
+	fs->extension_map_list.maps = NULL;
+
+	return InitExtensionMapList(fs);
+
+} // End of ReInitExtensionMapList
+
+int RemoveExtensionMap(FlowSource_t *fs, extension_map_t *map) {
+int slot = map->map_id;
+
+	dbg_printf("Remove extension map ID: %d\n", slot);
+	if ( slot >= fs->extension_map_list.max_maps ) {
+		// XXX hmm .. is simply return correct ///
+		LogError("*** software error *** Try to remove extension map %d, while only %d slots are available\n", slot, fs->extension_map_list.max_maps);
+		return 0;
+	}
+	fs->extension_map_list.maps[slot] = NULL;
+
+	return 1;
+
+} // End of RemoveExtensionMap
+
 int AddExtensionMap(FlowSource_t *fs, extension_map_t *map) {
 int next_slot = fs->extension_map_list.next_free;
 
+	dbg_printf("Add extension map\n");
 	// is it a new map, we have not yet in the list
 	if ( map->map_id == INIT_ID ) {
 		if ( next_slot >= fs->extension_map_list.max_maps ) {
 			// extend map list
+			dbg_printf("List full - extend extension list to %d slots\n", fs->extension_map_list.max_maps + BLOCK_SIZE);
 			extension_map_t **p = realloc((void *)fs->extension_map_list.maps, 
 				(fs->extension_map_list.max_maps + BLOCK_SIZE ) * sizeof(extension_map_t *));
 			if ( !p ) {
@@ -462,10 +490,33 @@ int next_slot = fs->extension_map_list.next_free;
 			fs->extension_map_list.max_maps += BLOCK_SIZE;
 		}
 	
+		dbg_printf("Add map to slot %d\n", next_slot);
 		fs->extension_map_list.maps[next_slot] = map;
-	
 		map->map_id = next_slot;
-		fs->extension_map_list.next_free++;
+		fs->extension_map_list.num_maps++;
+
+		if ( (next_slot + 1) == fs->extension_map_list.num_maps ) {
+			// sequencially filled slots
+			// next free is next slot
+			fs->extension_map_list.next_free++;
+			dbg_printf("Next slot is sequential: %d\n", fs->extension_map_list.next_free);
+		} else {
+			// fill gap in list - search for next free
+			int i;
+			dbg_printf("Search next slot ... \n");
+			for ( i = (next_slot + 1); i < fs->extension_map_list.max_maps; i++ ) {
+				if ( fs->extension_map_list.maps[i] == NULL ) {
+					// empty slot found
+					dbg_printf("Empty slot found at %d\n", i);
+					break;
+				}
+			} 
+			// assign next_free - if none found up to max, the list will get extended
+			// in the next round
+			dbg_printf("Set next free to %d\n", i);
+			fs->extension_map_list.next_free = i;
+		}
+		
 	}
 
 	AppendToBuffer(fs->nffile, (void *)map, map->size);
@@ -545,7 +596,8 @@ int i;
 
     for ( i=0; i<fs->extension_map_list.next_free; i++ ) {
         extension_map_t *map = fs->extension_map_list.maps[i];
-		AppendToBuffer(fs->nffile, (void *)map, map->size);
+		if ( map ) 
+			AppendToBuffer(fs->nffile, (void *)map, map->size);
     }
 
 } // End of FlushStdRecords

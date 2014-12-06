@@ -79,12 +79,13 @@ static char		**IdentList;
 static void UpdateList(uint32_t a, uint32_t b);
 
 /* flow processing functions */
-static inline uint64_t pps_function(uint64_t *data);
-static inline uint64_t bps_function(uint64_t *data);
-static inline uint64_t bpp_function(uint64_t *data);
-static inline uint64_t duration_function(uint64_t *data);
-static inline uint64_t mpls_eos_function(uint64_t *data);
-static inline uint64_t mpls_any_function(uint64_t *data);
+static inline void pps_function(uint64_t *record_data, uint64_t *comp_values);
+static inline void bps_function(uint64_t *record_data, uint64_t *comp_values);
+static inline void bpp_function(uint64_t *record_data, uint64_t *comp_values);
+static inline void duration_function(uint64_t *record_data, uint64_t *comp_values);
+static inline void mpls_eos_function(uint64_t *record_data, uint64_t *comp_values);
+static inline void mpls_any_function(uint64_t *record_data, uint64_t *comp_values);
+static inline void pblock_function(uint64_t *record_data, uint64_t *comp_values);
 
 /* 
  * flow processing function table:
@@ -100,7 +101,8 @@ static struct flow_procs_map_s {
 	{"bpp",			bpp_function},
 	{"duration",	duration_function},
 	{"mpls eos",	mpls_eos_function},
- 	{"mpls any",	mpls_any_function},
+	{"mpls any",	mpls_any_function},
+ 	{"pblock", 		pblock_function},
 	{NULL,			NULL}
 };
 
@@ -442,7 +444,7 @@ int	evaluate, invert;
 /* extended filter engine */
 int RunExtendedFilter(FilterEngine_data_t *args) {
 uint32_t	index, offset; 
-uint64_t	value;
+uint64_t	comp_value[2];
 int	evaluate, invert;
 
 	index = args->StartNode;
@@ -452,30 +454,30 @@ int	evaluate, invert;
 		offset   = args->filter[index].offset;
 		invert   = args->filter[index].invert;
 
-		if (args->filter[index].function == NULL)
-			value = args->nfrecord[offset] & args->filter[index].mask;
-		else
-			value = args->filter[index].function(args->nfrecord);
+		comp_value[0] = args->nfrecord[offset] & args->filter[index].mask;
+		comp_value[1] = args->filter[index].value;
+
+		if (args->filter[index].function != NULL)
+			args->filter[index].function(args->nfrecord, comp_value);
 
 		switch (args->filter[index].comp) {
 			case CMP_EQ:
-				evaluate = value == args->filter[index].value;
+				evaluate = comp_value[0] == comp_value[1];
 				break;
 			case CMP_GT:
-				evaluate = value > args->filter[index].value;
+				evaluate = comp_value[0] > comp_value[1];
 				break;
 			case CMP_LT:
-				evaluate = value < args->filter[index].value;
+				evaluate = comp_value[0] < comp_value[1];
 				break;
 			case CMP_IDENT:
-				value = args->filter[index].value;
-				evaluate = strncmp(CurrentIdent, args->IdentList[value], IDENTLEN) == 0 ;
+				evaluate = strncmp(CurrentIdent, args->IdentList[comp_value[1]], IDENTLEN) == 0 ;
 				break;
 			case CMP_FLAGS:
 				if ( invert )
-					evaluate = value > 0;
+					evaluate = comp_value[0] > 0;
 				else
-					evaluate = value == args->filter[index].value;
+					evaluate = comp_value[0] == comp_value[1];
 				break;
 			case CMP_IPLIST: {
 				struct IPListNode find;
@@ -487,7 +489,7 @@ int	evaluate, invert;
 				break;
 			case CMP_ULLIST: {
 				struct ULongListNode find;
-				find.value = value;
+				find.value = comp_value[0];
 				evaluate = RB_FIND(ULongtree, args->filter[index].data, &find ) != NULL; }
 				break;
 		}
@@ -534,90 +536,96 @@ uint32_t	num;
 
 /* record processing functions */
 
-static inline uint64_t duration_function(uint64_t *data) {
-master_record_t *record;
-uint64_t		duration;
+static inline void duration_function(uint64_t *record_data, uint64_t *comp_values) {
+master_record_t *record = (master_record_t *)record_data;
 
-	record = (master_record_t *)data;
 	/* duration in msec */
-	duration = 1000*(record->last - record->first) + record->msec_last - record->msec_first;
-
-	return duration;
+	comp_values[0] = 1000*(record->last - record->first) + record->msec_last - record->msec_first;
 
 } // End of duration_function
 
-static inline uint64_t pps_function(uint64_t *data) {
-master_record_t *record;
+static inline void pps_function(uint64_t *record_data, uint64_t *comp_values) {
+master_record_t *record = (master_record_t *)record_data;
 uint64_t		duration;
 
-	record = (master_record_t *)data;
 	/* duration in msec */
 	duration = 1000*(record->last - record->first) + record->msec_last - record->msec_first;
 	if ( duration == 0 )
-		return 0;
+		comp_values[0] = 0;
 	else 
-		return ( 1000LL * record->dPkts ) / duration;
+		comp_values[0] = ( 1000LL * record->dPkts ) / duration;
 
 } // End of pps_function
 
-static inline uint64_t bps_function(uint64_t *data) {
-master_record_t *record;
+static inline void bps_function(uint64_t *record_data, uint64_t *comp_values) {
+master_record_t *record = (master_record_t *)record_data;
 uint64_t		duration;
 
-	record = (master_record_t *)data;
 	/* duration in msec */
 	duration = 1000*(record->last - record->first) + record->msec_last - record->msec_first;
 	if ( duration == 0 )
-		return 0;
+		comp_values[0] = 0;
 	else 
-		return ( 8000LL * record->dOctets ) / duration;	/* 8 bits per Octet - x 1000 for msec */
+		comp_values[0] = ( 8000LL * record->dOctets ) / duration;	/* 8 bits per Octet - x 1000 for msec */
 
 } // End of bps_function
 
-static inline uint64_t bpp_function(uint64_t *data) {
-master_record_t 	*record;
+static inline void bpp_function(uint64_t *record_data, uint64_t *comp_values) {
+master_record_t *record = (master_record_t *)record_data;
 
-	record = (master_record_t *)data;
-	return record->dPkts ? record->dOctets / record->dPkts : 0;
+	comp_values[0] = record->dPkts ? record->dOctets / record->dPkts : 0;
 
 } // End of bpp_function
 
-static inline uint64_t mpls_eos_function(uint64_t *data) {
-master_record_t 	*record;
+static inline void mpls_eos_function(uint64_t *record_data, uint64_t *comp_values) {
+master_record_t *record = (master_record_t *)record_data;
 int i;
-
-	record = (master_record_t *)data;
 
 	// search for end of MPLS stack label
 	for (i=0; i<10; i++ ) {
 		if ( record->mpls_label[i] & 1 ) {
 			// End of stack found -> mask exp and eos bits
-			return record->mpls_label[i] & 0x00FFFFF0;
+			comp_values[0] = record->mpls_label[i] & 0x00FFFFF0;
+			return;
 		}
 	}
 
 	// trick filter to fail with an invalid mpls label value
-	return 0xFF000000;
+	comp_values[0] = 0xFF000000;
 
 } // End of mpls_eos_function
 
-static inline uint64_t mpls_any_function(uint64_t *data) {
-master_record_t *record;
+static inline void mpls_any_function(uint64_t *record_data, uint64_t *comp_values) {
+master_record_t *record = (master_record_t *)record_data;
 int i;
-
-	record = (master_record_t *)data;
 
 	// search for end of MPLS stack label
 	for (i=0; i<10; i++ ) {
 		if ( (record->mpls_label[i] & 1) == 1 ) {
 			// End of stack found -> mask exp and eos bits
-			return record->mpls_label[i] & 0x00FFFFF0;
+			comp_values[0] = record->mpls_label[i] & 0x00FFFFF0;
+			return;
 		}
 	}
 
 	// trick filter to fail with an invalid mpls label value
-	return 0xFF000000;
+	comp_values[0] = 0xFF000000;
 
 } // End of mpls_eos_function
 
+static inline void pblock_function(uint64_t *record_data, uint64_t *comp_values) {
+#ifdef NSEL
+master_record_t *record = (master_record_t *)record_data;
+	comp_values[0] = comp_values[0] >> comp_values[1];
+	if ( (comp_values[0] >= record->block_start) && (comp_values[0] <= record->block_end) ) {
+		comp_values[1] = comp_values[0];
+	} else {
+		// force "not equal"
+		comp_values[1] = comp_values[0] + 1;
+	}
+#else
+	comp_values[1] = 0;
+#endif
+
+} // End of pblock_function
 

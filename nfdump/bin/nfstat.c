@@ -415,6 +415,7 @@ struct order_mode_s {
 	order_proc_record_t  record_function;	// Function to call for record stats
 	order_proc_element_t element_function;	// Function to call for element stats
 } order_mode[] = {
+	{ "-",			0, 	0,	0, NULL, NULL},	// empty entry 0
 	{ "flows",		FLOWS, 	IN,	DESCENDING, NULL, NULL},
 	{ "packets",	INPACKETS,	IN,	 DESCENDING, NULL, NULL},
 	{ "ipkg",		INPACKETS,	IN,	 DESCENDING, NULL, NULL},
@@ -1422,7 +1423,7 @@ struct tm	*tbuff;
 
 } // End of PrintCvsStatLine
 
-void PrintFlowTable(printer_t print_record, uint32_t limitflows, int tag, int GuessDir, extension_map_list_t *extension_map_list) {
+void PrintFlowTable(printer_t print_record, uint32_t topN, int tag, int GuessDir, extension_map_list_t *extension_map_list) {
 hash_FlowTable *FlowTable;
 FlowTableRecord_t	*r;
 master_record_t		*aggr_record_mask;
@@ -1485,47 +1486,9 @@ char				*string;
 		if ( c >= 2 )
  			heapSort(SortList, c, 0);
 
-		PrintSortedFlowcache(SortList, maxindex, limitflows, GuessDir, 
+		PrintSortedFlowcache(SortList, maxindex, topN, GuessDir, 
 			print_record, tag, order_mode[PrintOrder].direction, extension_map_list);
 
-/*
-		if ( limitflows && limitflows < maxindex )
-			maxindex = limitflows;
-		for ( i = 0; i < maxindex; i++ ) {
-			master_record_t	*flow_record;
-			common_record_t *raw_record;
-			int map_id;
-
-			r = (FlowTableRecord_t *)(SortList[i].record);
-			raw_record = &(r->flowrecord);
-			map_id = r->map_ref->map_id;
-
-			flow_record = &(extension_map_list.slot[map_id]->master_record);
-			ExpandRecord_v2( raw_record, extension_map_list.slot[map_id], flow_record);
-			flow_record->dPkts 		= r->counter[INPACKETS];
-			flow_record->dOctets 	= r->counter[INBYTES];
-			flow_record->out_pkts 	= r->counter[OUTPACKETS];
-			flow_record->out_bytes 	= r->counter[OUTBYTES];
-			flow_record->aggr_flows 	= r->counter[FLOWS];
-			
-			// apply IP mask from aggregation, to provide a pretty output
-			if ( FlowTable->has_masks ) {
-				flow_record->v6.srcaddr[0] &= FlowTable->IPmask[0];
-				flow_record->v6.srcaddr[1] &= FlowTable->IPmask[1];
-				flow_record->v6.dstaddr[0] &= FlowTable->IPmask[2];
-				flow_record->v6.dstaddr[1] &= FlowTable->IPmask[3];
-			}
-
-			if ( aggr_record_mask ) {
-				ApplyAggrMask(flow_record, aggr_record_mask);
-			}
-
-			if ( GuessDir && ( flow_record->srcport < 1024 && flow_record->dstport > 1024 ) )
-				SwapFlow(flow_record);
-			print_record((void *)flow_record, &string, tag);
-			printf("%s\n", string);
-		}
-*/
 	} else {
 		// print them as they came
 		c = 0;
@@ -1536,7 +1499,7 @@ char				*string;
 				common_record_t *raw_record;
 				int map_id;
 
-				if ( limitflows && c >= limitflows )
+				if ( topN && c >= topN )
 					return;
 
 				// we want to print only those flows which pass the packet or byte limits

@@ -1,3 +1,18 @@
+2014-11-16
+- Fix v1 extension size bug
+- Add htonll check for autoconf
+- Fix AddExtensionMap compare bug
+- Fix ipfix templare withdraw problems - free all maps correctly
+- Add minilzo 2.08 - fixes CVE-2014-4607
+- Cleanup some stat code. more needs to be done ..
+- Cleanup man pages for -O -n
+- Remove SunPro test in configure - no longer supported anyway
+- Cleanup NAT/NSEL filter differences
+
+2014-06-15 v1.6.12p1
+- Add pblock compare functions
+- Update extended filter: Allow modification left/right values
+
 2014-02-16 v1.6.12
 - Add NAT pool port allocation
 - Modify/fix NAT vrf tags. Add egress vrf ID

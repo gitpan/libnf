@@ -1,4 +1,5 @@
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -6,9 +7,23 @@
 /* uncommon types used by libnf */
 /* IP address, MAC address, MPLS stack */
 //typedef struct in6_addr lnf_ip_t;
-typedef struct lnf_ip { uint32_t data[4]; } lnf_ip_t;
-typedef struct lnf_mac { uint8_t data[6]; }  lnf_mac_t;
-typedef struct lnf_mpls { uint32_t data[10]; } lnf_mpls_t;
+typedef struct lnf_ip_s { uint32_t data[4]; } lnf_ip_t;
+typedef struct lnf_mac_s { uint8_t data[6]; }  lnf_mac_t;
+typedef struct lnf_mpls_s { uint32_t data[10]; } lnf_mpls_t;
+
+/* basic record type 1 - contains the most commonly used fields */
+typedef struct lnf_brec1_s {
+	uint64_t	first;			/* LNF_FLD_FIRST */
+	uint64_t	last;			/* LNF_FLD_LAST */
+	lnf_ip_t	srcaddr;		/* LNF_FLD_SRCADDR */
+	lnf_ip_t	dstaddr;		/* LNF_FLD_DSTADDR */
+	uint8_t		prot;			/* LNF_FLD_PROT */
+	uint16_t	srcport;		/* LNF_FLD_SRCPORT */
+	uint16_t	dstport;		/* LNF_FLD_DSTPORT */
+	uint64_t	bytes;			/* LNF_FLD_DOCTETS */
+	uint64_t	pkts;			/* LNF_FLD_DPKTS */
+	uint64_t	flows;			/* LNF_FLD_AGGR_FLOWS */
+} lnf_brec1_t;
 
 #define LNF_MAX_STRING		512
 
@@ -23,83 +38,91 @@ typedef struct lnf_mpls { uint32_t data[10]; } lnf_mpls_t;
 #define LNF_MAC				0xA2
 #define LNF_STRING			0xAA	/* null terminated string */
 #define LNF_MPLS			0xAB	/* mpls labels */
-#define LNF_BASIC_RECORD	0xB1
+#define LNF_BASIC_RECORD1	0xB1
 
 
-#define LNF_MASK_TYPE  		0x000000FF
+#define LNF_MASK_TYPE  		0x0000FF
+#define LNF_MASK_FIELD 		0xFFFF00 
+
 #define LNF_GET_TYPE(x) 	(x & LNF_MASK_TYPE)
+//#define LNF_GET_FIELD(x) 	((x & LNF_MASK_FIELD) >> 8)
+#define LNF_GET_FIELD(x) 	x
 
 /* top two bytes of field identifies data type LNF_UINT8, ... */
 
 #define LNF_FLD_ZERO			0x00
-#define LNF_FLD_FIRST			0x010000 | LNF_UINT64
-#define LNF_FLD_LAST			0x020064
-#define LNF_FLD_RECEIVED		0x030064
-#define LNF_FLD_DOCTETS			0x040064
-#define LNF_FLD_DPKTS			0x050064
-#define LNF_FLD_OUT_BYTES		0x060064
-#define LNF_FLD_OUT_PKTS		0x070064
-#define LNF_FLD_AGGR_FLOWS		0x080064
-#define LNF_FLD_SRCPORT 		0x090016
-#define LNF_FLD_DSTPORT			0x0a0016
-#define LNF_FLD_TCP_FLAGS		0x0b0008
-#define LNF_FLD_SRCADDR 		0x0c00a1
-#define LNF_FLD_DSTADDR			0x0d00a1
-#define LNF_FLD_IP_NEXTHOP		0x0e00a1
-#define LNF_FLD_SRC_MASK		0x0f0008
-#define LNF_FLD_DST_MASK		0x100008
-#define LNF_FLD_TOS				0x110008
-#define LNF_FLD_DST_TOS			0x130008
-#define LNF_FLD_SRCAS			0x140032
-#define LNF_FLD_DSTAS			0x150032
-#define LNF_FLD_BGPNEXTADJACENTAS	0x160032
-#define LNF_FLD_BGPPREVADJACENTAS	0x170032
-#define LNF_FLD_BGP_NEXTHOP			0x1800a1
-#define LNF_FLD_PROT	 		0x190008
-#define LNF_FLD_SRC_VLAN		0x200016
-#define LNF_FLD_DST_VLAN		0x210016
-#define LNF_FLD_IN_SRC_MAC		0x2200a2
-#define LNF_FLD_OUT_SRC_MAC		0x2300a2
-#define LNF_FLD_IN_DST_MAC		0x2400a2
-#define LNF_FLD_OUT_DST_MAC		0x2500a2
-#define LNF_FLD_MPLS_LABEL		0x2600ab
-#define LNF_FLD_INPUT			0x270016
-#define LNF_FLD_OUTPUT			0x280016
-#define LNF_FLD_DIR				0x290008
-#define LNF_FLD_FWD_STATUS		0x300008
-#define LNF_FLD_IP_ROUTER		0x3100a1
-#define LNF_FLD_ENGINE_TYPE		0x320008
-#define LNF_FLD_ENGINE_ID		0x3a0008
-#define LNF_FLD_EVENT_TIME		0x340064
-#define LNF_FLD_CONN_ID			0x350032
-#define LNF_FLD_ICMP_CODE		0x360008
-#define LNF_FLD_ICMP_TYPE		0x370008
-#define LNF_FLD_FW_XEVENT		0x380016
-#define LNF_FLD_XLATE_SRC_IP	0x3900a1
-#define LNF_FLD_XLATE_DST_IP	0x4000a1
-#define LNF_FLD_XLATE_SRC_PORT	0x410016
-#define LNF_FLD_XLATE_DST_PORT	0x420016
-#define LNF_FLD_INGRESS_ACL_ID	0x430032
-#define LNF_FLD_INGRESS_ACE_ID	0x440032
-#define LNF_FLD_INGRESS_XACE_ID	0x450032
-#define LNF_FLD_EGRESS_ACL_ID	0x460032
-#define LNF_FLD_EGRESS_ACE_ID	0x470032
-#define LNF_FLD_EGRESS_XACE_ID	0x480032
-#define LNF_FLD_USERNAME		0x4900AA
-#define LNF_FLD_INGRESS_VRFID	0x500032
-#define LNF_FLD_EVENT_FLAG		0x510008
-#define LNF_FLD_EGRESS_VRFID	0x520032
-#define LNF_FLD_BLOCK_START		0x530016
-#define LNF_FLD_BLOCK_END		0x540016
-#define LNF_FLD_BLOCK_STEP		0x550016
-#define LNF_FLD_BLOCK_SIZE		0x560016
-#define LNF_FLD_CLIENT_NW_DELAY_USEC	0x570064
-#define LNF_FLD_SERVER_NW_DELAY_USEC	0x580064
-#define LNF_FLD_APPL_LATENCY_USEC		0x590064
+#define LNF_FLD_FIRST			( 0x0100 | LNF_UINT64 )
+#define LNF_FLD_LAST			( 0x0200 | LNF_UINT64 )
+#define LNF_FLD_RECEIVED		( 0x0300 | LNF_UINT64 )
+#define LNF_FLD_DOCTETS			( 0x0400 | LNF_UINT64 )
+#define LNF_FLD_DPKTS			( 0x0500 | LNF_UINT64 )
+#define LNF_FLD_OUT_BYTES		( 0x0600 | LNF_UINT64 )
+#define LNF_FLD_OUT_PKTS		( 0x0700 | LNF_UINT64 )
+#define LNF_FLD_AGGR_FLOWS		( 0x0800 | LNF_UINT64 )
+#define LNF_FLD_SRCPORT 		( 0x0900 | LNF_UINT16 )
+#define LNF_FLD_DSTPORT			( 0x0a00 | LNF_UINT16 )
+#define LNF_FLD_TCP_FLAGS		( 0x0b00 | LNF_UINT8 )
+#define LNF_FLD_SRCADDR 		( 0x0c00 | LNF_ADDR )
+#define LNF_FLD_DSTADDR			( 0x0d00 | LNF_ADDR )
+#define LNF_FLD_IP_NEXTHOP		( 0x0e00 | LNF_ADDR )
+#define LNF_FLD_SRC_MASK		( 0x0f00 | LNF_UINT8 )
+#define LNF_FLD_DST_MASK		( 0x1000 | LNF_UINT8 )
+#define LNF_FLD_TOS				( 0x1100 | LNF_UINT8 )
+#define LNF_FLD_DST_TOS			( 0x1200 | LNF_UINT8 )
+#define LNF_FLD_SRCAS			( 0x1300 | LNF_UINT32 )
+#define LNF_FLD_DSTAS			( 0x1400 | LNF_UINT32 )
+#define LNF_FLD_BGPNEXTADJACENTAS	( 0x1500 | LNF_UINT32 )
+#define LNF_FLD_BGPPREVADJACENTAS	( 0x1600 | LNF_UINT32 )
+#define LNF_FLD_BGP_NEXTHOP			( 0x1700 | LNF_ADDR )
+#define LNF_FLD_PROT	 		( 0x1800 | LNF_UINT8 )
+#define LNF_FLD_SRC_VLAN		( 0x1900 | LNF_UINT16 )
+#define LNF_FLD_DST_VLAN		( 0x1a00 | LNF_UINT16 )
+#define LNF_FLD_IN_SRC_MAC		( 0x1b00 | LNF_MAC )
+#define LNF_FLD_OUT_SRC_MAC		( 0x1c00 | LNF_MAC )
+#define LNF_FLD_IN_DST_MAC		( 0x1d00 | LNF_MAC )
+#define LNF_FLD_OUT_DST_MAC		( 0x1e00 | LNF_MAC )
+#define LNF_FLD_MPLS_LABEL		( 0x1f00 | LNF_MPLS )
+#define LNF_FLD_INPUT			( 0x2000 | LNF_UINT16 )
+#define LNF_FLD_OUTPUT			( 0x2100 | LNF_UINT16 )
+#define LNF_FLD_DIR				( 0x2200 | LNF_UINT8 )
+#define LNF_FLD_FWD_STATUS		( 0x2300 | LNF_UINT8 )
+#define LNF_FLD_IP_ROUTER		( 0x2400 | LNF_ADDR )
+#define LNF_FLD_ENGINE_TYPE		( 0x2500 | LNF_UINT8 )
+#define LNF_FLD_ENGINE_ID		( 0x2600 | LNF_UINT8 )
+#define LNF_FLD_EVENT_TIME		( 0x2700 | LNF_UINT64 )
+#define LNF_FLD_CONN_ID			( 0x2800 | LNF_UINT32 )
+#define LNF_FLD_ICMP_CODE		( 0x2900 | LNF_UINT8 )
+#define LNF_FLD_ICMP_TYPE		( 0x2a00 | LNF_UINT8 )
+#define LNF_FLD_FW_XEVENT		( 0x2b00 | LNF_UINT16 )
+#define LNF_FLD_XLATE_SRC_IP	( 0x2c00 | LNF_ADDR )
+#define LNF_FLD_XLATE_DST_IP	( 0x2d00 | LNF_ADDR )
+#define LNF_FLD_XLATE_SRC_PORT	( 0x2e00 | LNF_UINT16 )
+#define LNF_FLD_XLATE_DST_PORT	( 0x2f00 | LNF_UINT16 )
+#define LNF_FLD_INGRESS_ACL_ID	( 0x3000 | LNF_UINT32 )
+#define LNF_FLD_INGRESS_ACE_ID	( 0x3100 | LNF_UINT32 )
+#define LNF_FLD_INGRESS_XACE_ID	( 0x3200 | LNF_UINT32 )
+#define LNF_FLD_EGRESS_ACL_ID	( 0x3300 | LNF_UINT32 )
+#define LNF_FLD_EGRESS_ACE_ID	( 0x3400 | LNF_UINT32 )
+#define LNF_FLD_EGRESS_XACE_ID	( 0x3500 | LNF_UINT32 )
+#define LNF_FLD_USERNAME		( 0x3600 | LNF_STRING )
+#define LNF_FLD_INGRESS_VRFID	( 0x3700 | LNF_UINT32 )
+#define LNF_FLD_EVENT_FLAG		( 0x3800 | LNF_UINT8 )
+#define LNF_FLD_EGRESS_VRFID	( 0x3900 | LNF_UINT32 )
+#define LNF_FLD_BLOCK_START		( 0x3a00 | LNF_UINT16 )
+#define LNF_FLD_BLOCK_END		( 0x3b00 | LNF_UINT16 )
+#define LNF_FLD_BLOCK_STEP		( 0x3c00 | LNF_UINT16 )
+#define LNF_FLD_BLOCK_SIZE		( 0x3d00 | LNF_UINT16 )
+#define LNF_FLD_CLIENT_NW_DELAY_USEC	( 0x3e00 | LNF_UINT64 )
+#define LNF_FLD_SERVER_NW_DELAY_USEC	( 0x3f00 | LNF_UINT64 )
+#define LNF_FLD_APPL_LATENCY_USEC		( 0x4000 | LNF_UINT64 )
+
+#define LNF_FLD_BREC1			( 0x41000 | LNF_BASIC_RECORD1 ) 	/* special field for lnf_brec1_t */
 
 /* text description of fields */
 typedef struct lnf_field_s {
 	int index;			/* numerical index of field */
+	int default_aggr;	/* default aggregation function */
+	int default_sort;	/* default sort order */
 	char *name;			/* field name */
 	char *fld_descr;	/* short description */
 } lnf_field_t;
@@ -159,6 +182,7 @@ typedef struct lnf_info_s {
 typedef void lnf_file_t;	
 typedef void lnf_rec_t;		
 typedef void lnf_filter_t;
+typedef void lnf_mem_t;
 #endif
 
  
@@ -174,27 +198,27 @@ typedef void lnf_filter_t;
 #define LNF_ERR_CORRUPT		-0x0020	/* coruprted file */
 #define LNF_ERR_EXTMAPB		-0x0040	/* too big extension map */
 #define LNF_ERR_EXTMAPM		-0x0080	/* missing extension map */
-#define LNF_ERR_WRITE		-0x00F0	/* missing extension map */
+#define LNF_ERR_WRITE		-0x00F0	/* write error */
 
 #define LNF_ERR_NOTSET		-0x0100	/* item is not set  */
-#define LNF_ERR_UKNFLD		-0x0200	/* inknown field  */
+#define LNF_ERR_UKNFLD		-0x0200	/* unknown field  */
 #define LNF_ERR_FILTER		-0x0400	/* cannot compile filter  */
 #define LNF_ERR_NOMEM		-0x0800	/* cannot allocate memory  */
-#define LNF_ERR_OTHER		-0x0F00	/* cannot allocate memory  */
+#define LNF_ERR_OTHER		-0x0F00	/* some other error */
 
 
 /* flags for file open */
-#define LNF_READ	0x0		
-#define LNF_WRITE	0x1		/* file is open for writing */
+#define LNF_READ	0x0		/* open file for reading */
+#define LNF_WRITE	0x1		/* open file for for writing */
 #define LNF_ANON	0x2		/* set anon flag on the file */
 #define LNF_COMP	0x4		/* the file is compressed */
 #define LNF_WEAKERR	0x8		/* return weak erros $(unknow block, record) */
 
 /* other functions */
-void lnf_error(char *buf, int buflen);
+void lnf_error(const char *buf, int buflen);
 
 /* file operations */
-int lnf_open(lnf_file_t **lnf_filep, char *filename, unsigned int flags, char *ident);
+int lnf_open(lnf_file_t **lnf_filep, const char *filename, unsigned int flags, const char *ident);
 void lnf_info(lnf_file_t *lnf_file, lnf_info_t *lnf_info);
 int lnf_read(lnf_file_t *lnf_file, lnf_rec_t *lnf_rec);
 int lnf_write(lnf_file_t *lnf_file, lnf_rec_t *lnf_rec);
@@ -214,6 +238,30 @@ void lnf_rec_free(lnf_rec_t *rec);
 int	lnf_filter_init(lnf_filter_t **filterp, char *expr);
 int	lnf_filter_match(lnf_filter_t *filter, lnf_rec_t *rec);
 void lnf_filter_free(lnf_filter_t *filter);
+
+#define LNF_MAX_THREADS 128		/* maximum threads */
+
+/* memory heap operations */
+int lnf_mem_init(lnf_mem_t **lnf_mem);
+
+/* flags for lnf_mem_addf */
+#define LNF_AGGR_KEY	0x0000	/* the key item */
+#define LNF_AGGR_MIN	0x0001	/* min value - for LNF_FLD_FIRST */
+#define LNF_AGGR_MAX	0x0002	/* max value - for LNF_FLD_LAST */
+#define LNF_AGGR_SUM	0x0003	/* summary of values - for all counters */
+#define LNF_AGGR_OR		0x0004	/* OR operation - for LNF_TCP_FLAGS */
+#define LNF_AGGR_FLAGS	0x000F
+
+#define LNF_SORT_NONE	0x0000	/* do not sort by this field */
+#define LNF_SORT_ASC	0x0010	/* sort by item ascending */
+#define LNF_SORT_DESC	0x0020	/* sort by item descending */
+#define LNF_SORT_FLAGS	0x00F0
+
+int lnf_mem_fadd(lnf_mem_t *lnf_mem, int field, int flags, int numbits, int numbits6);
+int lnf_mem_write(lnf_mem_t *lnf_mem, lnf_rec_t *rec);
+int lnf_mem_merge_threads(lnf_mem_t *lnf_mem);
+int lnf_mem_read(lnf_mem_t *lnf_mem, lnf_rec_t *rec);
+void lnf_mem_free(lnf_mem_t *lnf_mem);
 
 
 #ifndef IN6_IS_ADDR_V4COMPAT

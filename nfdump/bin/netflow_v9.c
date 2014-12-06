@@ -1564,6 +1564,8 @@ char				*string;
 		table->out_packets 	  	    = 0;
 		table->out_bytes 	  	    = 0;
 
+		dbg_printf("%u] Process data record: MapID: %u\n", exporter->info.id, table->extension_info.map->map_id);
+
 		// apply copy and processing sequence
 		for ( i=0; i<table->number_of_sequences; i++ ) {
 			int input_offset  = table->sequence[i].input_offset;

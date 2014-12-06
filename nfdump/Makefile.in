@@ -82,7 +82,7 @@ DIST_COMMON = INSTALL NEWS README AUTHORS ChangeLog \
 	$(srcdir)/config.h.in COPYING compile depcomp install-sh \
 	missing ylwrap
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -288,7 +288,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = . bin man
-EXTRA_dist = CreateSubHierarchy.pl
+EXTRA_DIST = CreateSubHierarchy.pl BSD-license.txt extra/PortTracker.pm extra/nfdump.spec bootstrap flows
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

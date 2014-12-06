@@ -1,5 +1,43 @@
 Revision history for C and Perl extension of nfdump.
 
+1.06 2014-12-06
+	- perl: build system update 
+
+1.05 2014-12-05
+	- c: build system update 
+	- c: added --enable-threads for thread support; disabled by default
+	- c: flex, bison is not needed for building 
+	- c: adjusted to nfdump 1.6.13
+
+1.04 2014-11-17
+	- perl: added example examples/example2.pl 
+	- perl: added test 08-aggreg-sort.t 
+	- perl: aggregation and sorting added into 
+	  Net::NfDump (Aggreg => 1 and SortBy => <field> attributes)
+	- c: lnf_field_t structure extended with default sort and 
+	  aggregation order 
+	- c: added example lnf_ex04_threads.c 
+	- c: threads support added for paralel processing flow 
+	  records in aggregation. Code not released for public,
+	  the public version works properly only in sigle 
+	  thread enviroment.
+	- c: added example lnf_ex03_aggreg.c 
+	- c: added lnf_mem object with aggregation and sorting capability 
+	- c: lnf_rec_fget, lnf_rec_fset incerased prtformance (30%) 
+	  Thanks to Vasek Bartos.
+
+1.03 2014-06-23
+	- c: headers includes in the examples
+	- c: code preparation for aggregation and sorting
+	- perl: test for pure read withour record processing (-G)
+
+1.02 2014-06-18
+	- c: added structure lnf_brec1_t containing most commonly used records 
+	- c: examples updated to use lnf_brec1_t
+	- c: examples updated to be usable for benchmarking 
+	- perl: updated build system (more resistant)
+	- perl: benchmarking of c code added as the part of perl testing 
+
 1.01 2014-06-15
 	- source code strcitly separated into autonomous 
 	  package (libnf-xxx, universal C API) and perl 

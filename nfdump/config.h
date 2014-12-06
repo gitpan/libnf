@@ -1,5 +1,5 @@
 /* config.h.  Generated from config.h.in by configure.  */
-/* config.h.in.  Generated from configure.in by autoheader.  */
+/* config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define if building universal (internal helper macro) */
 /* #undef AC_APPLE_UNIVERSAL_BUILD */
@@ -40,6 +40,9 @@
 
 /* Define to 1 if you have the `gethostbyname' function. */
 #define HAVE_GETHOSTBYNAME 1
+
+/* Define to 1 if the function (or macro) htonll exists. */
+/* #undef HAVE_HTONLL */
 
 /* Define to 1 if you have the `inet_ntoa' function. */
 #define HAVE_INET_NTOA 1
@@ -240,7 +243,7 @@
 #define PACKAGE_NAME "nfdump"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "nfdump 1.6.12 $Date: 2014-04-02 20:08:48 +0200 (Wed, 02 Apr 2014) $"
+#define PACKAGE_STRING "nfdump 1.6.13"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "nfdump"
@@ -249,7 +252,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.6.12 $Date: 2014-04-02 20:08:48 +0200 (Wed, 02 Apr 2014) $"
+#define PACKAGE_VERSION "1.6.13"
 
 /* The size of `int', as computed by sizeof. */
 #define SIZEOF_INT 4
@@ -285,7 +288,7 @@
 /* #undef TM_IN_SYS_TIME */
 
 /* Version number of package */
-#define VERSION "1.6.12 $Date: 2014-04-02 20:08:48 +0200 (Wed, 02 Apr 2014) $"
+#define VERSION "1.6.13"
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */

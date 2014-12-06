@@ -127,6 +127,7 @@ typedef struct FlowSource_s {
 #define BLOCK_SIZE	16
 		int	next_free;
 		int	max_maps;
+		int num_maps;
 		extension_map_t	**maps;
 	} extension_map_list;
 
@@ -147,6 +148,10 @@ int SetDynamicSourcesDir(FlowSource_t **FlowSource, char *dir);
 FlowSource_t *AddDynamicSource(FlowSource_t **FlowSource, struct sockaddr_storage *ss);
 
 int InitExtensionMapList(FlowSource_t *fs);
+
+int ReInitExtensionMapList(FlowSource_t *fs);
+
+int RemoveExtensionMap(FlowSource_t *fs, extension_map_t *map);
 
 int AddExtensionMap(FlowSource_t *fs, extension_map_t *map);
 

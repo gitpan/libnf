@@ -94,7 +94,7 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am grammar.h \
 	grammar.c scanner.c $(top_srcdir)/depcomp $(top_srcdir)/ylwrap \
 	$(top_srcdir)/test-driver
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -109,8 +109,8 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__ft2nfdump_SOURCES_DIST = ft2nfdump.c nf_common.c nf_common.h \
-	version.h minilzo.c minilzo.h lzoconf.h lzodefs.h nffile.c \
-	nffile.h nfx.c nfx.h nfxstat.h nfxstat.c util.c util.h
+	minilzo.c minilzo.h lzoconf.h lzodefs.h nffile.c nffile.h \
+	nfx.c nfx.h nfxstat.h nfxstat.c util.c util.h
 am__objects_1 = ft2nfdump-nf_common.$(OBJEXT)
 am__objects_2 = ft2nfdump-minilzo.$(OBJEXT) ft2nfdump-nffile.$(OBJEXT) \
 	ft2nfdump-nfx.$(OBJEXT) ft2nfdump-nfxstat.$(OBJEXT)
@@ -132,8 +132,8 @@ am_nfanon_OBJECTS = nfanon.$(OBJEXT) $(am__objects_4) $(am__objects_5) \
 nfanon_OBJECTS = $(am_nfanon_OBJECTS)
 nfanon_LDADD = $(LDADD)
 nfanon_DEPENDENCIES =
-am__nfcapd_SOURCES_DIST = nfcapd.c nf_common.c nf_common.h version.h \
-	util.c util.h minilzo.c minilzo.h lzoconf.h lzodefs.h nffile.c \
+am__nfcapd_SOURCES_DIST = nfcapd.c nf_common.c nf_common.h util.c \
+	util.h minilzo.c minilzo.h lzoconf.h lzodefs.h nffile.c \
 	nffile.h nfx.c nfx.h nfxstat.h nfxstat.c flist.c flist.h \
 	fts_compat.c fts_compat.h nfstatfile.c nfstatfile.h launch.c \
 	launch.h nfnet.c nfnet.h collector.c collector.h netflow_v1.c \
@@ -244,6 +244,7 @@ am_nftest_OBJECTS = nftest.$(OBJEXT) $(am__objects_23) \
 	$(am__objects_4) $(am__objects_25) $(am__objects_5)
 nftest_OBJECTS = $(am_nftest_OBJECTS)
 nftest_LDADD = $(LDADD)
+am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_50 = nftrack-nf_common.$(OBJEXT)
 am__objects_51 = nftrack-util.$(OBJEXT)
 am__objects_52 = nftrack-minilzo.$(OBJEXT) nftrack-nffile.$(OBJEXT) \
@@ -251,8 +252,9 @@ am__objects_52 = nftrack-minilzo.$(OBJEXT) nftrack-nffile.$(OBJEXT) \
 am__objects_53 = nftrack-flist.$(OBJEXT) nftrack-fts_compat.$(OBJEXT)
 am__objects_54 = nftrack-grammar.$(OBJEXT) nftrack-scanner.$(OBJEXT) \
 	nftrack-nftree.$(OBJEXT) nftrack-ipconv.$(OBJEXT)
-am_nftrack_OBJECTS = nftrack-nftrack.$(OBJEXT) \
-	nftrack-nftrack_rrd.$(OBJEXT) nftrack-nftrack_stat.$(OBJEXT) \
+am_nftrack_OBJECTS = ../extra/nftrack/nftrack-nftrack.$(OBJEXT) \
+	../extra/nftrack/nftrack-nftrack_rrd.$(OBJEXT) \
+	../extra/nftrack/nftrack-nftrack_stat.$(OBJEXT) \
 	$(am__objects_50) $(am__objects_51) $(am__objects_52) \
 	$(am__objects_53) $(am__objects_54)
 nftrack_OBJECTS = $(am_nftrack_OBJECTS)
@@ -260,9 +262,9 @@ nftrack_DEPENDENCIES =
 nftrack_LINK = $(CCLD) $(nftrack_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am__sfcapd_SOURCES_DIST = sfcapd.c sflow.c sflow.h sflow_proto.h \
-	nf_common.c nf_common.h version.h util.c util.h minilzo.c \
-	minilzo.h lzoconf.h lzodefs.h nffile.c nffile.h nfx.c nfx.h \
-	nfxstat.h nfxstat.c flist.c flist.h fts_compat.c fts_compat.h \
+	nf_common.c nf_common.h util.c util.h minilzo.c minilzo.h \
+	lzoconf.h lzodefs.h nffile.c nffile.h nfx.c nfx.h nfxstat.h \
+	nfxstat.c flist.c flist.h fts_compat.c fts_compat.h \
 	nfstatfile.c nfstatfile.h launch.c launch.h nfnet.c nfnet.h \
 	collector.c collector.h bookkeeper.c bookkeeper.h expire.c \
 	expire.h pcap_reader.c pcap_reader.h
@@ -572,13 +574,13 @@ TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/test-driver
 TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 	$(TEST_LOG_FLAGS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /Users/tpoder/tmp/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump/missing aclocal-1.14
+ACLOCAL = ${SHELL} /Users/tpoder/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump/missing aclocal-1.14
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
-AUTOCONF = ${SHELL} /Users/tpoder/tmp/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump/missing autoconf
-AUTOHEADER = ${SHELL} /Users/tpoder/tmp/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump/missing autoheader
-AUTOMAKE = ${SHELL} /Users/tpoder/tmp/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump/missing automake-1.14
-AWK = awk
+AUTOCONF = ${SHELL} /Users/tpoder/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump/missing autoconf
+AUTOHEADER = ${SHELL} /Users/tpoder/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump/missing autoheader
+AUTOMAKE = ${SHELL} /Users/tpoder/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump/missing automake-1.14
+AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2 -Wall -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wmissing-noreturn -fno-strict-aliasing -DNSEL
@@ -596,7 +598,7 @@ FTS_OBJ =
 FT_INCLUDES = 
 FT_LDFLAGS = 
 GREP = /usr/bin/grep
-INSTALL = /opt/local/bin/ginstall -c
+INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
@@ -609,28 +611,28 @@ LFLAGS = -i
 LIBOBJS =  ${LIBOBJDIR}mktime$U.o ${LIBOBJDIR}lstat$U.o
 LIBS =  -lresolv
 LTLIBOBJS =  ${LIBOBJDIR}mktime$U.lo ${LIBOBJDIR}lstat$U.lo
-MAKEINFO = ${SHELL} /Users/tpoder/tmp/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump/missing makeinfo
-MKDIR_P = /opt/local/bin/gmkdir -p
+MAKEINFO = ${SHELL} /Users/tpoder/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump/missing makeinfo
+MKDIR_P = .././install-sh -c -d
 OBJEXT = o
 PACKAGE = nfdump
 PACKAGE_BUGREPORT = phaag@users.sourceforge.net
 PACKAGE_NAME = nfdump
-PACKAGE_STRING = nfdump 1.6.12 $Date: 2014-04-02 20:08:48 +0200 (Wed, 02 Apr 2014) $
+PACKAGE_STRING = nfdump 1.6.13
 PACKAGE_TARNAME = nfdump
 PACKAGE_URL = 
-PACKAGE_VERSION = 1.6.12 $Date: 2014-04-02 20:08:48 +0200 (Wed, 02 Apr 2014) $
+PACKAGE_VERSION = 1.6.13
 PATH_SEPARATOR = :
 RRD_LIBS = 
 SET_MAKE = 
 SHELL = /bin/sh
 STRIP = 
-VERSION = 1.6.12 $Date: 2014-04-02 20:08:48 +0200 (Wed, 02 Apr 2014) $
+VERSION = 1.6.13
 YACC = bison -y
 YFLAGS = 
-abs_builddir = /Users/tpoder/tmp/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump/bin
-abs_srcdir = /Users/tpoder/tmp/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump/bin
-abs_top_builddir = /Users/tpoder/tmp/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump
-abs_top_srcdir = /Users/tpoder/tmp/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump
+abs_builddir = /Users/tpoder/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump/bin
+abs_srcdir = /Users/tpoder/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump/bin
+abs_top_builddir = /Users/tpoder/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump
+abs_top_srcdir = /Users/tpoder/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump
 ac_ct_CC = gcc
 am__include = include
 am__leading_dot = .
@@ -649,7 +651,7 @@ host_alias =
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /Users/tpoder/tmp/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump/install-sh
+install_sh = ${SHELL} /Users/tpoder/nf-tools/libnf/perl/Net-NfDump/libnf/nfdump/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -672,12 +674,12 @@ top_srcdir = ..
 check_PROGRAMMS = test.sh
 BUILT_SOURCES = grammar.h
 AM_YFLAGS = -d
-INCLUDES = $(DEPS_CFLAGS)
+AM_CPPFLAGS = $(DEPS_CFLAGS)
 LDADD = $(DEPS_LIBS)
 
 #Add extra debug info for gdb
 AM_CFLAGS = -ggdb 
-common = nf_common.c nf_common.h version.h 
+common = nf_common.c nf_common.h 
 util = util.c util.h
 filelzo = minilzo.c minilzo.h lzoconf.h lzodefs.h nffile.c nffile.h nfx.c nfx.h nfxstat.h nfxstat.c 
 nflist = flist.c flist.h fts_compat.c fts_compat.h
@@ -710,7 +712,9 @@ nfprofile_SOURCES = nfprofile.c profile.c profile.h \
 	$(common) $(util) $(filelzo) $(nflist) $(filter) $(nfstatfile) $(exporter)
 
 nfprofile_LDADD = -lrrd
-nftrack_SOURCES = ../extra/nftrack/nftrack.c  ../extra/nftrack/nftrack_rrd.c  ../extra/nftrack/nftrack_stat.c \
+nftrack_SOURCES = ../extra/nftrack/nftrack.c \
+	../extra/nftrack/nftrack_rrd.c ../extra/nftrack/nftrack_rrd.h \
+	../extra/nftrack/nftrack_stat.c ../extra/nftrack/nftrack_stat.h \
 	$(common) $(util) $(filelzo) $(nflist) $(filter)
 
 nftrack_CFLAGS = -I ../extra/nftrack
@@ -750,7 +754,9 @@ nftest_DEPENDENCIES = nfgen
 #ft2nfdump_SOURCES = ft2nfdump.c $(common) $(filelzo) $(util)
 #ft2nfdump_CFLAGS = 
 #ft2nfdump_LDADD = -lft -lz 
-EXTRA_DIST = inline.c collector_inline.c nffile_inline.c nfdump_inline.c heapsort_inline.c applybits_inline.c test.sh nfdump.test.out parse_csv.pl
+EXTRA_DIST = inline.c collector_inline.c nffile_inline.c \
+	nfdump_inline.c heapsort_inline.c applybits_inline.c test.sh \
+	nfdump.test.out parse_csv.pl AddExtension.txt nfdump.test.diff
 CLEANFILES = lex.yy.c grammar.c grammar.h scanner.c scanner.h
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -876,6 +882,21 @@ nfreplay$(EXEEXT): $(nfreplay_OBJECTS) $(nfreplay_DEPENDENCIES) $(EXTRA_nfreplay
 nftest$(EXEEXT): $(nftest_OBJECTS) $(nftest_DEPENDENCIES) $(EXTRA_nftest_DEPENDENCIES) 
 	@rm -f nftest$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(nftest_OBJECTS) $(nftest_LDADD) $(LIBS)
+../extra/nftrack/$(am__dirstamp):
+	@$(MKDIR_P) ../extra/nftrack
+	@: > ../extra/nftrack/$(am__dirstamp)
+../extra/nftrack/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../extra/nftrack/$(DEPDIR)
+	@: > ../extra/nftrack/$(DEPDIR)/$(am__dirstamp)
+../extra/nftrack/nftrack-nftrack.$(OBJEXT):  \
+	../extra/nftrack/$(am__dirstamp) \
+	../extra/nftrack/$(DEPDIR)/$(am__dirstamp)
+../extra/nftrack/nftrack-nftrack_rrd.$(OBJEXT):  \
+	../extra/nftrack/$(am__dirstamp) \
+	../extra/nftrack/$(DEPDIR)/$(am__dirstamp)
+../extra/nftrack/nftrack-nftrack_stat.$(OBJEXT):  \
+	../extra/nftrack/$(am__dirstamp) \
+	../extra/nftrack/$(DEPDIR)/$(am__dirstamp)
 
 nftrack$(EXEEXT): $(nftrack_OBJECTS) $(nftrack_DEPENDENCIES) $(EXTRA_nftrack_DEPENDENCIES) 
 	@rm -f nftrack$(EXEEXT)
@@ -887,10 +908,14 @@ sfcapd$(EXEEXT): $(sfcapd_OBJECTS) $(sfcapd_DEPENDENCIES) $(EXTRA_sfcapd_DEPENDE
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f ../extra/nftrack/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
+include ../extra/nftrack/$(DEPDIR)/nftrack-nftrack.Po
+include ../extra/nftrack/$(DEPDIR)/nftrack-nftrack_rrd.Po
+include ../extra/nftrack/$(DEPDIR)/nftrack-nftrack_stat.Po
 include ./$(DEPDIR)/bookkeeper.Po
 include ./$(DEPDIR)/collector.Po
 include ./$(DEPDIR)/expire.Po
@@ -974,9 +999,6 @@ include ./$(DEPDIR)/nftrack-ipconv.Po
 include ./$(DEPDIR)/nftrack-minilzo.Po
 include ./$(DEPDIR)/nftrack-nf_common.Po
 include ./$(DEPDIR)/nftrack-nffile.Po
-include ./$(DEPDIR)/nftrack-nftrack.Po
-include ./$(DEPDIR)/nftrack-nftrack_rrd.Po
-include ./$(DEPDIR)/nftrack-nftrack_stat.Po
 include ./$(DEPDIR)/nftrack-nftree.Po
 include ./$(DEPDIR)/nftrack-nfx.Po
 include ./$(DEPDIR)/nftrack-nfxstat.Po
@@ -1009,15 +1031,17 @@ include ./$(DEPDIR)/sfcapd-util.Po
 include ./$(DEPDIR)/util.Po
 
 .c.o:
-	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
 #	$(AM_V_CC)source='$<' object='$@' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
 #	$(AM_V_CC)source='$<' object='$@' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
@@ -1680,47 +1704,47 @@ nfpcapd-content_dns.obj: content_dns.c
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nfpcapd_CFLAGS) $(CFLAGS) -c -o nfpcapd-content_dns.obj `if test -f 'content_dns.c'; then $(CYGPATH_W) 'content_dns.c'; else $(CYGPATH_W) '$(srcdir)/content_dns.c'; fi`
 
-nftrack-nftrack.o: ../extra/nftrack/nftrack.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -MT nftrack-nftrack.o -MD -MP -MF $(DEPDIR)/nftrack-nftrack.Tpo -c -o nftrack-nftrack.o `test -f '../extra/nftrack/nftrack.c' || echo '$(srcdir)/'`../extra/nftrack/nftrack.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/nftrack-nftrack.Tpo $(DEPDIR)/nftrack-nftrack.Po
-#	$(AM_V_CC)source='../extra/nftrack/nftrack.c' object='nftrack-nftrack.o' libtool=no \
+../extra/nftrack/nftrack-nftrack.o: ../extra/nftrack/nftrack.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -MT ../extra/nftrack/nftrack-nftrack.o -MD -MP -MF ../extra/nftrack/$(DEPDIR)/nftrack-nftrack.Tpo -c -o ../extra/nftrack/nftrack-nftrack.o `test -f '../extra/nftrack/nftrack.c' || echo '$(srcdir)/'`../extra/nftrack/nftrack.c
+	$(AM_V_at)$(am__mv) ../extra/nftrack/$(DEPDIR)/nftrack-nftrack.Tpo ../extra/nftrack/$(DEPDIR)/nftrack-nftrack.Po
+#	$(AM_V_CC)source='../extra/nftrack/nftrack.c' object='../extra/nftrack/nftrack-nftrack.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -c -o nftrack-nftrack.o `test -f '../extra/nftrack/nftrack.c' || echo '$(srcdir)/'`../extra/nftrack/nftrack.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -c -o ../extra/nftrack/nftrack-nftrack.o `test -f '../extra/nftrack/nftrack.c' || echo '$(srcdir)/'`../extra/nftrack/nftrack.c
 
-nftrack-nftrack.obj: ../extra/nftrack/nftrack.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -MT nftrack-nftrack.obj -MD -MP -MF $(DEPDIR)/nftrack-nftrack.Tpo -c -o nftrack-nftrack.obj `if test -f '../extra/nftrack/nftrack.c'; then $(CYGPATH_W) '../extra/nftrack/nftrack.c'; else $(CYGPATH_W) '$(srcdir)/../extra/nftrack/nftrack.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/nftrack-nftrack.Tpo $(DEPDIR)/nftrack-nftrack.Po
-#	$(AM_V_CC)source='../extra/nftrack/nftrack.c' object='nftrack-nftrack.obj' libtool=no \
+../extra/nftrack/nftrack-nftrack.obj: ../extra/nftrack/nftrack.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -MT ../extra/nftrack/nftrack-nftrack.obj -MD -MP -MF ../extra/nftrack/$(DEPDIR)/nftrack-nftrack.Tpo -c -o ../extra/nftrack/nftrack-nftrack.obj `if test -f '../extra/nftrack/nftrack.c'; then $(CYGPATH_W) '../extra/nftrack/nftrack.c'; else $(CYGPATH_W) '$(srcdir)/../extra/nftrack/nftrack.c'; fi`
+	$(AM_V_at)$(am__mv) ../extra/nftrack/$(DEPDIR)/nftrack-nftrack.Tpo ../extra/nftrack/$(DEPDIR)/nftrack-nftrack.Po
+#	$(AM_V_CC)source='../extra/nftrack/nftrack.c' object='../extra/nftrack/nftrack-nftrack.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -c -o nftrack-nftrack.obj `if test -f '../extra/nftrack/nftrack.c'; then $(CYGPATH_W) '../extra/nftrack/nftrack.c'; else $(CYGPATH_W) '$(srcdir)/../extra/nftrack/nftrack.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -c -o ../extra/nftrack/nftrack-nftrack.obj `if test -f '../extra/nftrack/nftrack.c'; then $(CYGPATH_W) '../extra/nftrack/nftrack.c'; else $(CYGPATH_W) '$(srcdir)/../extra/nftrack/nftrack.c'; fi`
 
-nftrack-nftrack_rrd.o: ../extra/nftrack/nftrack_rrd.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -MT nftrack-nftrack_rrd.o -MD -MP -MF $(DEPDIR)/nftrack-nftrack_rrd.Tpo -c -o nftrack-nftrack_rrd.o `test -f '../extra/nftrack/nftrack_rrd.c' || echo '$(srcdir)/'`../extra/nftrack/nftrack_rrd.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/nftrack-nftrack_rrd.Tpo $(DEPDIR)/nftrack-nftrack_rrd.Po
-#	$(AM_V_CC)source='../extra/nftrack/nftrack_rrd.c' object='nftrack-nftrack_rrd.o' libtool=no \
+../extra/nftrack/nftrack-nftrack_rrd.o: ../extra/nftrack/nftrack_rrd.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -MT ../extra/nftrack/nftrack-nftrack_rrd.o -MD -MP -MF ../extra/nftrack/$(DEPDIR)/nftrack-nftrack_rrd.Tpo -c -o ../extra/nftrack/nftrack-nftrack_rrd.o `test -f '../extra/nftrack/nftrack_rrd.c' || echo '$(srcdir)/'`../extra/nftrack/nftrack_rrd.c
+	$(AM_V_at)$(am__mv) ../extra/nftrack/$(DEPDIR)/nftrack-nftrack_rrd.Tpo ../extra/nftrack/$(DEPDIR)/nftrack-nftrack_rrd.Po
+#	$(AM_V_CC)source='../extra/nftrack/nftrack_rrd.c' object='../extra/nftrack/nftrack-nftrack_rrd.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -c -o nftrack-nftrack_rrd.o `test -f '../extra/nftrack/nftrack_rrd.c' || echo '$(srcdir)/'`../extra/nftrack/nftrack_rrd.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -c -o ../extra/nftrack/nftrack-nftrack_rrd.o `test -f '../extra/nftrack/nftrack_rrd.c' || echo '$(srcdir)/'`../extra/nftrack/nftrack_rrd.c
 
-nftrack-nftrack_rrd.obj: ../extra/nftrack/nftrack_rrd.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -MT nftrack-nftrack_rrd.obj -MD -MP -MF $(DEPDIR)/nftrack-nftrack_rrd.Tpo -c -o nftrack-nftrack_rrd.obj `if test -f '../extra/nftrack/nftrack_rrd.c'; then $(CYGPATH_W) '../extra/nftrack/nftrack_rrd.c'; else $(CYGPATH_W) '$(srcdir)/../extra/nftrack/nftrack_rrd.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/nftrack-nftrack_rrd.Tpo $(DEPDIR)/nftrack-nftrack_rrd.Po
-#	$(AM_V_CC)source='../extra/nftrack/nftrack_rrd.c' object='nftrack-nftrack_rrd.obj' libtool=no \
+../extra/nftrack/nftrack-nftrack_rrd.obj: ../extra/nftrack/nftrack_rrd.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -MT ../extra/nftrack/nftrack-nftrack_rrd.obj -MD -MP -MF ../extra/nftrack/$(DEPDIR)/nftrack-nftrack_rrd.Tpo -c -o ../extra/nftrack/nftrack-nftrack_rrd.obj `if test -f '../extra/nftrack/nftrack_rrd.c'; then $(CYGPATH_W) '../extra/nftrack/nftrack_rrd.c'; else $(CYGPATH_W) '$(srcdir)/../extra/nftrack/nftrack_rrd.c'; fi`
+	$(AM_V_at)$(am__mv) ../extra/nftrack/$(DEPDIR)/nftrack-nftrack_rrd.Tpo ../extra/nftrack/$(DEPDIR)/nftrack-nftrack_rrd.Po
+#	$(AM_V_CC)source='../extra/nftrack/nftrack_rrd.c' object='../extra/nftrack/nftrack-nftrack_rrd.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -c -o nftrack-nftrack_rrd.obj `if test -f '../extra/nftrack/nftrack_rrd.c'; then $(CYGPATH_W) '../extra/nftrack/nftrack_rrd.c'; else $(CYGPATH_W) '$(srcdir)/../extra/nftrack/nftrack_rrd.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -c -o ../extra/nftrack/nftrack-nftrack_rrd.obj `if test -f '../extra/nftrack/nftrack_rrd.c'; then $(CYGPATH_W) '../extra/nftrack/nftrack_rrd.c'; else $(CYGPATH_W) '$(srcdir)/../extra/nftrack/nftrack_rrd.c'; fi`
 
-nftrack-nftrack_stat.o: ../extra/nftrack/nftrack_stat.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -MT nftrack-nftrack_stat.o -MD -MP -MF $(DEPDIR)/nftrack-nftrack_stat.Tpo -c -o nftrack-nftrack_stat.o `test -f '../extra/nftrack/nftrack_stat.c' || echo '$(srcdir)/'`../extra/nftrack/nftrack_stat.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/nftrack-nftrack_stat.Tpo $(DEPDIR)/nftrack-nftrack_stat.Po
-#	$(AM_V_CC)source='../extra/nftrack/nftrack_stat.c' object='nftrack-nftrack_stat.o' libtool=no \
+../extra/nftrack/nftrack-nftrack_stat.o: ../extra/nftrack/nftrack_stat.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -MT ../extra/nftrack/nftrack-nftrack_stat.o -MD -MP -MF ../extra/nftrack/$(DEPDIR)/nftrack-nftrack_stat.Tpo -c -o ../extra/nftrack/nftrack-nftrack_stat.o `test -f '../extra/nftrack/nftrack_stat.c' || echo '$(srcdir)/'`../extra/nftrack/nftrack_stat.c
+	$(AM_V_at)$(am__mv) ../extra/nftrack/$(DEPDIR)/nftrack-nftrack_stat.Tpo ../extra/nftrack/$(DEPDIR)/nftrack-nftrack_stat.Po
+#	$(AM_V_CC)source='../extra/nftrack/nftrack_stat.c' object='../extra/nftrack/nftrack-nftrack_stat.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -c -o nftrack-nftrack_stat.o `test -f '../extra/nftrack/nftrack_stat.c' || echo '$(srcdir)/'`../extra/nftrack/nftrack_stat.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -c -o ../extra/nftrack/nftrack-nftrack_stat.o `test -f '../extra/nftrack/nftrack_stat.c' || echo '$(srcdir)/'`../extra/nftrack/nftrack_stat.c
 
-nftrack-nftrack_stat.obj: ../extra/nftrack/nftrack_stat.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -MT nftrack-nftrack_stat.obj -MD -MP -MF $(DEPDIR)/nftrack-nftrack_stat.Tpo -c -o nftrack-nftrack_stat.obj `if test -f '../extra/nftrack/nftrack_stat.c'; then $(CYGPATH_W) '../extra/nftrack/nftrack_stat.c'; else $(CYGPATH_W) '$(srcdir)/../extra/nftrack/nftrack_stat.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/nftrack-nftrack_stat.Tpo $(DEPDIR)/nftrack-nftrack_stat.Po
-#	$(AM_V_CC)source='../extra/nftrack/nftrack_stat.c' object='nftrack-nftrack_stat.obj' libtool=no \
+../extra/nftrack/nftrack-nftrack_stat.obj: ../extra/nftrack/nftrack_stat.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -MT ../extra/nftrack/nftrack-nftrack_stat.obj -MD -MP -MF ../extra/nftrack/$(DEPDIR)/nftrack-nftrack_stat.Tpo -c -o ../extra/nftrack/nftrack-nftrack_stat.obj `if test -f '../extra/nftrack/nftrack_stat.c'; then $(CYGPATH_W) '../extra/nftrack/nftrack_stat.c'; else $(CYGPATH_W) '$(srcdir)/../extra/nftrack/nftrack_stat.c'; fi`
+	$(AM_V_at)$(am__mv) ../extra/nftrack/$(DEPDIR)/nftrack-nftrack_stat.Tpo ../extra/nftrack/$(DEPDIR)/nftrack-nftrack_stat.Po
+#	$(AM_V_CC)source='../extra/nftrack/nftrack_stat.c' object='../extra/nftrack/nftrack-nftrack_stat.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -c -o nftrack-nftrack_stat.obj `if test -f '../extra/nftrack/nftrack_stat.c'; then $(CYGPATH_W) '../extra/nftrack/nftrack_stat.c'; else $(CYGPATH_W) '$(srcdir)/../extra/nftrack/nftrack_stat.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -c -o ../extra/nftrack/nftrack-nftrack_stat.obj `if test -f '../extra/nftrack/nftrack_stat.c'; then $(CYGPATH_W) '../extra/nftrack/nftrack_stat.c'; else $(CYGPATH_W) '$(srcdir)/../extra/nftrack/nftrack_stat.c'; fi`
 
 nftrack-nf_common.o: nf_common.c
 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nftrack_CFLAGS) $(CFLAGS) -MT nftrack-nf_common.o -MD -MP -MF $(DEPDIR)/nftrack-nf_common.Tpo -c -o nftrack-nf_common.o `test -f 'nf_common.c' || echo '$(srcdir)/'`nf_common.c
@@ -2426,6 +2450,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f ../extra/nftrack/$(DEPDIR)/$(am__dirstamp)
+	-rm -f ../extra/nftrack/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -2439,7 +2465,7 @@ clean: clean-am
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ../extra/nftrack/$(DEPDIR) ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -2485,7 +2511,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ../extra/nftrack/$(DEPDIR) ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

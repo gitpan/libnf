@@ -1148,6 +1148,52 @@ void *p;
 	ret = check_filter_block("pblock size 4444", &flow_record, 1);
 	ret = check_filter_block("pblock size 5555", &flow_record, 0);
 
+	flow_record.srcport = 63;
+	flow_record.dstport = 255;
+	ret = check_filter_block("src port in pblock", &flow_record, 0);
+	ret = check_filter_block("dst port in pblock", &flow_record, 0);
+	ret = check_filter_block("port in pblock", &flow_record, 0);
+
+	flow_record.srcport = 1110;
+	ret = check_filter_block("src port in pblock", &flow_record, 0);
+	ret = check_filter_block("port in pblock", &flow_record, 0);
+
+	flow_record.srcport = 1111;
+	ret = check_filter_block("src port in pblock", &flow_record, 1);
+	ret = check_filter_block("port in pblock", &flow_record, 1);
+
+	flow_record.srcport = 2222;
+	ret = check_filter_block("src port in pblock", &flow_record, 1);
+	ret = check_filter_block("port in pblock", &flow_record, 1);
+
+	flow_record.srcport = 2223;
+	ret = check_filter_block("src port in pblock", &flow_record, 0);
+	ret = check_filter_block("port in pblock", &flow_record, 0);
+
+	flow_record.dstport = 1110;
+	ret = check_filter_block("src port in pblock", &flow_record, 0);
+	ret = check_filter_block("dst port in pblock", &flow_record, 0);
+	ret = check_filter_block("port in pblock", &flow_record, 0);
+
+	flow_record.dstport = 1111;
+	ret = check_filter_block("dst port in pblock", &flow_record, 1);
+	ret = check_filter_block("port in pblock", &flow_record, 1);
+exit(0);
+
+	flow_record.dstport = 2222;
+	ret = check_filter_block("dst port in pblock", &flow_record, 1);
+	ret = check_filter_block("port in pblock", &flow_record, 1);
+
+	flow_record.dstport = 2223;
+	ret = check_filter_block("dst port in pblock", &flow_record, 0);
+	ret = check_filter_block("port in pblock", &flow_record, 0);
+
+	flow_record.srcport = 1234;
+	flow_record.srcport = 2134;
+	ret = check_filter_block("src port in pblock", &flow_record, 1);
+	ret = check_filter_block("dst port in pblock", &flow_record, 1);
+	ret = check_filter_block("port in pblock", &flow_record, 1);
+
 	flow_record.xlate_src_port = 1023;
 	flow_record.xlate_dst_port = 32798;
 	ret = check_filter_block("src nport 1023", &flow_record, 1);

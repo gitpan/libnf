@@ -43,7 +43,7 @@
  * type definitions for nf tree
  */
 
-typedef uint64_t (*flow_proc_t)(uint64_t *);
+typedef void (*flow_proc_t)(uint64_t *, uint64_t *);
 
 typedef struct FilterBlock {
 	/* Filter specific data */
@@ -93,7 +93,8 @@ enum { 	FUNC_NONE = 0,	/* no function - just plain filtering - just to be comple
 		FUNC_BPP,		/* function code for bpp ( bytes per packet ) filter function */
 		FUNC_DURATION,	/* function code for duration ( in miliseconds ) filter function */
 		FUNC_MPLS_EOS,	/* function code for matching End of MPLS Stack label */
-		FUNC_MPLS_ANY	/* function code for matching any MPLS label */ 
+		FUNC_MPLS_ANY,	/* function code for matching any MPLS label */ 
+		FUNC_PBLOCK		/* function code for matching ports against pblock start */
 };
 
 /* 

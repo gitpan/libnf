@@ -100,6 +100,8 @@
 #include "nfxstat.h"
 #include "collector.h"
 #include "exporter.h"
+#include "rbtree.h"
+#include "ipfrag.h"
 
 #ifdef HAVE_FTS_H
 #   include <fts.h>
@@ -1213,7 +1215,7 @@ p_flow_thread_args_t *p_flow_thread_args;
 	verbose			= 0;
 	expire			= 0;
 	cache_size		= 0;
-	while ((c = getopt(argc, argv, "B:DEg:hi:r:s:l:p:P:t:u:S:T:e:Vz")) != EOF) {
+	while ((c = getopt(argc, argv, "B:DEI:g:hi:r:s:l:p:P:t:u:S:T:e:Vz")) != EOF) {
 		switch (c) {
 			struct stat fstat;
 			case 'h':
@@ -1235,6 +1237,9 @@ p_flow_thread_args_t *p_flow_thread_args;
 					LogError("ERROR: Cache size must not be < 0");
 					exit(EXIT_FAILURE);
 				}
+				break;
+			case 'I':
+				Ident = strdup(optarg);
 				break;
 			case 'i':
 				device = optarg;

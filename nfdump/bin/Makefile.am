@@ -24,13 +24,13 @@ endif
 BUILT_SOURCES = grammar.h
 AM_YFLAGS = -d
 
-INCLUDES = $(DEPS_CFLAGS)
+AM_CPPFLAGS = $(DEPS_CFLAGS)
 LDADD = $(DEPS_LIBS)
 
 #Add extra debug info for gdb
 AM_CFLAGS = -ggdb 
 
-common =  nf_common.c nf_common.h version.h 
+common =  nf_common.c nf_common.h 
 util = util.c util.h
 filelzo = minilzo.c minilzo.h lzoconf.h lzodefs.h nffile.c nffile.h nfx.c nfx.h nfxstat.h nfxstat.c 
 nflist = flist.c flist.h fts_compat.c fts_compat.h
@@ -64,7 +64,9 @@ nfprofile_SOURCES = nfprofile.c profile.c profile.h \
 	$(common) $(util) $(filelzo) $(nflist) $(filter) $(nfstatfile) $(exporter)
 nfprofile_LDADD = -lrrd
 
-nftrack_SOURCES = ../extra/nftrack/nftrack.c  ../extra/nftrack/nftrack_rrd.c  ../extra/nftrack/nftrack_stat.c \
+nftrack_SOURCES = ../extra/nftrack/nftrack.c \
+	../extra/nftrack/nftrack_rrd.c ../extra/nftrack/nftrack_rrd.h \
+	../extra/nftrack/nftrack_stat.c ../extra/nftrack/nftrack_stat.h \
 	$(common) $(util) $(filelzo) $(nflist) $(filter)
 nftrack_CFLAGS = -I ../extra/nftrack
 nftrack_LDADD = -lrrd
@@ -123,6 +125,6 @@ ft2nfdump_LDADD = -lft -lz
 ft2nfdump_LDADD += @FT_LDFLAGS@
 endif
 
-EXTRA_DIST = inline.c collector_inline.c nffile_inline.c nfdump_inline.c heapsort_inline.c applybits_inline.c test.sh nfdump.test.out parse_csv.pl
-	
+EXTRA_DIST = inline.c collector_inline.c nffile_inline.c nfdump_inline.c heapsort_inline.c applybits_inline.c 
+EXTRA_DIST += test.sh nfdump.test.out parse_csv.pl AddExtension.txt	nfdump.test.diff
 CLEANFILES = lex.yy.c grammar.c grammar.h scanner.c scanner.h

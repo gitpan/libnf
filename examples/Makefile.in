@@ -78,7 +78,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = lnf_example1$(EXEEXT) lnf_example2$(EXEEXT)
+bin_PROGRAMS = lnf_ex01_writer$(EXEEXT) lnf_ex02_reader$(EXEEXT) \
+	lnf_ex03_aggreg$(EXEEXT) $(am__EXEEXT_1)
+@LNF_THREADS_TRUE@am__append_1 = lnf_ex04_threads
 subdir = examples
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/depcomp
@@ -90,18 +92,28 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+@LNF_THREADS_TRUE@am__EXEEXT_1 = lnf_ex04_threads$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_lnf_example1_OBJECTS = lnf_example1.$(OBJEXT)
-lnf_example1_OBJECTS = $(am_lnf_example1_OBJECTS)
-lnf_example1_DEPENDENCIES = ../src/.libs/libnf.a
+am_lnf_ex01_writer_OBJECTS = lnf_ex01_writer.$(OBJEXT)
+lnf_ex01_writer_OBJECTS = $(am_lnf_ex01_writer_OBJECTS)
+lnf_ex01_writer_DEPENDENCIES = ../src/.libs/libnf.a
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-am_lnf_example2_OBJECTS = lnf_example2.$(OBJEXT)
-lnf_example2_OBJECTS = $(am_lnf_example2_OBJECTS)
-lnf_example2_DEPENDENCIES = ../src/.libs/libnf.a
+am_lnf_ex02_reader_OBJECTS = lnf_ex02_reader.$(OBJEXT)
+lnf_ex02_reader_OBJECTS = $(am_lnf_ex02_reader_OBJECTS)
+lnf_ex02_reader_DEPENDENCIES = ../src/.libs/libnf.a
+am_lnf_ex03_aggreg_OBJECTS = lnf_ex03_aggreg.$(OBJEXT)
+lnf_ex03_aggreg_OBJECTS = $(am_lnf_ex03_aggreg_OBJECTS)
+lnf_ex03_aggreg_DEPENDENCIES = ../src/.libs/libnf.a
+am__lnf_ex04_threads_SOURCES_DIST = lnf_ex04_threads.c
+@LNF_THREADS_TRUE@am_lnf_ex04_threads_OBJECTS =  \
+@LNF_THREADS_TRUE@	lnf_ex04_threads.$(OBJEXT)
+lnf_ex04_threads_OBJECTS = $(am_lnf_ex04_threads_OBJECTS)
+@LNF_THREADS_TRUE@lnf_ex04_threads_DEPENDENCIES =  \
+@LNF_THREADS_TRUE@	../src/.libs/libnf.a
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -136,8 +148,11 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(lnf_example1_SOURCES) $(lnf_example2_SOURCES)
-DIST_SOURCES = $(lnf_example1_SOURCES) $(lnf_example2_SOURCES)
+SOURCES = $(lnf_ex01_writer_SOURCES) $(lnf_ex02_reader_SOURCES) \
+	$(lnf_ex03_aggreg_SOURCES) $(lnf_ex04_threads_SOURCES)
+DIST_SOURCES = $(lnf_ex01_writer_SOURCES) $(lnf_ex02_reader_SOURCES) \
+	$(lnf_ex03_aggreg_SOURCES) \
+	$(am__lnf_ex04_threads_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -227,7 +242,6 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
-RRD_LIBS = @RRD_LIBS@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
@@ -288,10 +302,15 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CFLAGS = -I$(top_srcdir)/include 
-lnf_example1_SOURCES = lnf_example1.c
-lnf_example1_LDADD = ../src/.libs/libnf.a
-lnf_example2_SOURCES = lnf_example2.c
-lnf_example2_LDADD = ../src/.libs/libnf.a
+lnf_ex01_writer_SOURCES = lnf_ex01_writer.c
+lnf_ex01_writer_LDADD = ../src/.libs/libnf.a
+lnf_ex02_reader_SOURCES = lnf_ex02_reader.c
+lnf_ex02_reader_LDADD = ../src/.libs/libnf.a
+#lnf_example2_LDADD = -lnf
+lnf_ex03_aggreg_SOURCES = lnf_ex03_aggreg.c
+lnf_ex03_aggreg_LDADD = ../src/.libs/libnf.a
+@LNF_THREADS_TRUE@lnf_ex04_threads_SOURCES = lnf_ex04_threads.c
+@LNF_THREADS_TRUE@lnf_ex04_threads_LDADD = ../src/.libs/libnf.a -lpthread
 all: all-am
 
 .SUFFIXES:
@@ -376,13 +395,21 @@ clean-binPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
-lnf_example1$(EXEEXT): $(lnf_example1_OBJECTS) $(lnf_example1_DEPENDENCIES) $(EXTRA_lnf_example1_DEPENDENCIES) 
-	@rm -f lnf_example1$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(lnf_example1_OBJECTS) $(lnf_example1_LDADD) $(LIBS)
+lnf_ex01_writer$(EXEEXT): $(lnf_ex01_writer_OBJECTS) $(lnf_ex01_writer_DEPENDENCIES) $(EXTRA_lnf_ex01_writer_DEPENDENCIES) 
+	@rm -f lnf_ex01_writer$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(lnf_ex01_writer_OBJECTS) $(lnf_ex01_writer_LDADD) $(LIBS)
 
-lnf_example2$(EXEEXT): $(lnf_example2_OBJECTS) $(lnf_example2_DEPENDENCIES) $(EXTRA_lnf_example2_DEPENDENCIES) 
-	@rm -f lnf_example2$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(lnf_example2_OBJECTS) $(lnf_example2_LDADD) $(LIBS)
+lnf_ex02_reader$(EXEEXT): $(lnf_ex02_reader_OBJECTS) $(lnf_ex02_reader_DEPENDENCIES) $(EXTRA_lnf_ex02_reader_DEPENDENCIES) 
+	@rm -f lnf_ex02_reader$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(lnf_ex02_reader_OBJECTS) $(lnf_ex02_reader_LDADD) $(LIBS)
+
+lnf_ex03_aggreg$(EXEEXT): $(lnf_ex03_aggreg_OBJECTS) $(lnf_ex03_aggreg_DEPENDENCIES) $(EXTRA_lnf_ex03_aggreg_DEPENDENCIES) 
+	@rm -f lnf_ex03_aggreg$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(lnf_ex03_aggreg_OBJECTS) $(lnf_ex03_aggreg_LDADD) $(LIBS)
+
+lnf_ex04_threads$(EXEEXT): $(lnf_ex04_threads_OBJECTS) $(lnf_ex04_threads_DEPENDENCIES) $(EXTRA_lnf_ex04_threads_DEPENDENCIES) 
+	@rm -f lnf_ex04_threads$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(lnf_ex04_threads_OBJECTS) $(lnf_ex04_threads_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -390,26 +417,31 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lnf_example1.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lnf_example2.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lnf_ex01_writer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lnf_ex02_reader.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lnf_ex03_aggreg.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lnf_ex04_threads.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
@@ -625,7 +657,6 @@ uninstall-am: uninstall-binPROGRAMS
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS
 
-#lnf_example2_LDADD = -lnf
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

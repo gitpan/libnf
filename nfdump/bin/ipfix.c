@@ -296,7 +296,7 @@ extern uint32_t	exporter_sysid;
 // prototypes
 static input_translation_t *add_translation_table(exporter_ipfix_domain_t *exporter, uint16_t id);
 
-static void remove_translation_table(exporter_ipfix_domain_t *exporter, uint16_t id);
+static void remove_translation_table(FlowSource_t *fs, exporter_ipfix_domain_t *exporter, uint16_t id);
 
 static void remove_all_translation_tables(exporter_ipfix_domain_t *exporter);
 
@@ -478,7 +478,7 @@ input_translation_t **table;
 
 } // End of add_translation_table
 
-static void remove_translation_table(exporter_ipfix_domain_t *exporter, uint16_t id) {
+static void remove_translation_table(FlowSource_t *fs, exporter_ipfix_domain_t *exporter, uint16_t id) {
 input_translation_t *table, *parent;
 
 	syslog(LOG_INFO, "Process_ipfix: [%u] Withdraw template id: %i", 
@@ -499,6 +499,10 @@ input_translation_t *table, *parent;
 
 	dbg_printf("\n[%u] Withdraw template ID: %u\n", exporter->info.id, table->id);
 
+	// clear table cache, if this is the table to delete
+	if (exporter->current_table == table)
+		exporter->current_table = NULL;
+
 	if ( parent ) {
 		// remove table from list
 		parent->next = table->next;
@@ -507,6 +511,7 @@ input_translation_t *table, *parent;
 		exporter->input_translation_table = NULL;
 	}
 
+	RemoveExtensionMap(fs, table->extension_info.map);
 	free(table->sequence);
 	free(table->extension_info.map);
 	free(table);
@@ -531,6 +536,10 @@ input_translation_t *table, *next;
 
 		table = next;
 	}
+
+	// clear references
+	exporter->input_translation_table = NULL;
+	exporter->current_table = NULL;
 
 } // End of remove_all_translation_tables
 
@@ -1062,8 +1071,9 @@ ipfix_template_record_t *ipfix_template_record;
 		if ( id == IPFIX_TEMPLATE_FLOWSET_ID ) {
 			// withdraw all templates
 			remove_all_translation_tables(exporter);
+			ReInitExtensionMapList(fs);
 		} else {
-			remove_translation_table(exporter, id);
+			remove_translation_table(fs, exporter, id);
 		}
 
 		DataPtr = DataPtr + 4;

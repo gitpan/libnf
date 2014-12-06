@@ -95,6 +95,15 @@ static inline void ExpandRecord_v2(common_record_t *input_record, extension_info
 extension_map_t *extension_map = extension_info->map;
 uint32_t	i, *u;
 void		*p = (void *)input_record;
+#ifdef NSEL
+		// nasty bug work around - compat issues 1.6.10 - 1.6.12 onwards
+		union {
+			uint16_t port[2];
+			uint32_t vrf;
+		} compat_nel_bug;
+		compat_nel_bug.vrf = 0;
+		int compat_nel = 0;
+#endif
 
 	// set map ref
 	output_record->map_ref = extension_map;
@@ -360,7 +369,10 @@ void		*p = (void *)input_record;
 #ifdef NSEL
 			case EX_NSEL_COMMON: {
 				tpl_ext_37_t *tpl = (tpl_ext_37_t *)p;
-				output_record->event_time = tpl->event_time;
+				value64_t v;
+				v.val.val32[0] = tpl->v[0];
+				v.val.val32[1] = tpl->v[1];
+				output_record->event_time = v.val.val64;
 				output_record->conn_id 	  = tpl->conn_id;
 				output_record->event   	  = tpl->fw_event;
 				output_record->event_flag = FW_EVENT;
@@ -423,8 +435,16 @@ void		*p = (void *)input_record;
 				output_record->egress_vrfid  = tpl->egress_vrfid;
 				output_record->ingress_vrfid = tpl->ingress_vrfid;
 				p = (void *)tpl->data;
+
+				// remember this value, if we read old 1.6.10 files
+				compat_nel_bug.vrf = tpl->egress_vrfid;
+				if ( compat_nel ) {
+					output_record->xlate_src_port = compat_nel_bug.port[0];
+					output_record->xlate_dst_port = compat_nel_bug.port[1];
+					output_record->egress_vrfid   = 0;
+				}
 			} break;
-			// XXX compat only
+			// compat record v1.6.10
 			case EX_NEL_GLOBAL_IP_v4: {
 				tpl_ext_47_t *tpl = (tpl_ext_47_t *)p;
 				output_record->xlate_src_ip.v6[0] = 0;
@@ -434,6 +454,11 @@ void		*p = (void *)input_record;
 				output_record->xlate_dst_ip.v6[1] = 0;
 				output_record->xlate_dst_ip.v4	= tpl->nat_outside;
 				p = (void *)tpl->data;
+
+				output_record->xlate_src_port = compat_nel_bug.port[0];
+				output_record->xlate_dst_port = compat_nel_bug.port[1];
+				output_record->egress_vrfid   = 0;
+				compat_nel = 1;
 			} break;
 			case EX_PORT_BLOCK_ALLOC: {
 				tpl_ext_48_t *tpl = (tpl_ext_48_t *)p;
@@ -441,6 +466,8 @@ void		*p = (void *)input_record;
 				output_record->block_end = tpl->block_end;
 				output_record->block_step = tpl->block_step;
 				output_record->block_size = tpl->block_size;
+				if ( output_record->block_end == 0 && output_record->block_size != 0 ) 
+					output_record->block_end = output_record->block_start + output_record->block_size - 1;
 				p = (void *)tpl->data;
 			} break;
 			
